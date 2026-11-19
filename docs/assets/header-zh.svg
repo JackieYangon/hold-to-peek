@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" fill="none">
+  <title>瞄一眼 · 按住看参考，松手接着干</title>
+  <desc>项目开发中。原创交互概念示意，非运行截图。左侧是产品名称与说明，右侧示意在工作窗口旁按住显示参考步骤，并高亮第二行。</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="540" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F6EF"/>
+      <stop offset="1" stop-color="#E9F0E9"/>
+    </linearGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="165%">
+      <feDropShadow dx="0" dy="15" stdDeviation="18" flood-color="#1D4039" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="540" rx="28" fill="url(#background)"/>
+  <circle cx="1100" cy="20" r="210" fill="#DDE8DF"/>
+  <circle cx="1190" cy="475" r="180" fill="#E3EBDF"/>
+  <g font-family="'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif">
+    <rect x="52" y="48" width="132" height="30" rx="15" fill="#173E35"/>
+    <text x="118" y="68" text-anchor="middle" fill="#F1F8F0" font-size="12" font-weight="600" letter-spacing="2">HOLD TO PEEK</text>
+    <text x="52" y="171" fill="#173E35" font-size="74" font-weight="700" letter-spacing="5">瞄一眼</text>
+    <text x="54" y="232" fill="#173E35" font-size="29" font-weight="600">按住看参考，松手接着干。</text>
+    <text x="54" y="282" fill="#597168" font-size="19">那几行需要反复确认的内容，</text>
+    <text x="54" y="314" fill="#597168" font-size="19">就放在鼠标旁。</text>
+    <rect x="54" y="350" width="88" height="32" rx="8" stroke="#B9CEC1"/>
+    <text x="98" y="371" text-anchor="middle" fill="#456356" font-size="13">Windows</text>
+    <rect x="154" y="350" width="132" height="32" rx="8" stroke="#B9CEC1"/>
+    <text x="220" y="371" text-anchor="middle" fill="#456356" font-size="13">首版目标 1.0.0</text>
+
+    <!-- Original concept illustration; not a screenshot of a running app. -->
+    <g filter="url(#shadow)">
+      <rect x="620" y="93" width="482" height="286" rx="18" fill="#FFFFFF"/>
+    </g>
+    <path d="M638 93H1084Q1102 93 1102 111V139H620V111Q620 93 638 93Z" fill="#F8FAF7"/>
+    <circle cx="645" cy="116" r="4" fill="#CBD7CF"/>
+    <circle cx="660" cy="116" r="4" fill="#CBD7CF"/>
+    <circle cx="675" cy="116" r="4" fill="#CBD7CF"/>
+    <text x="697" y="121" fill="#7B8F83" font-size="13">正在操作的窗口</text>
+    <text x="651" y="180" fill="#284B3E" font-size="22" font-weight="600">显示设置</text>
+    <rect x="651" y="202" width="222" height="7" rx="3.5" fill="#E8EEE8"/>
+    <rect x="651" y="226" width="302" height="49" rx="9" fill="#F4F7F2"/>
+    <text x="668" y="256" fill="#6F8276" font-size="14">缩放</text>
+    <rect x="835" y="236" width="99" height="29" rx="6" fill="#FFFFFF" stroke="#DDE6DD"/>
+    <text x="858" y="256" fill="#567061" font-size="13">125%</text>
+    <rect x="651" y="290" width="139" height="7" rx="3.5" fill="#E8EEE8"/>
+    <rect x="651" y="312" width="175" height="7" rx="3.5" fill="#E8EEE8"/>
+    <rect x="651" y="334" width="109" height="7" rx="3.5" fill="#E8EEE8"/>
+
+    <g filter="url(#shadow)">
+      <rect x="843" y="239" width="298" height="184" rx="15" fill="#173E35"/>
+    </g>
+    <circle cx="864" cy="265" r="4" fill="#C0EB97"/>
+    <text x="878" y="270" fill="#DAE8DB" font-size="13">参考步骤</text>
+    <rect x="1057" y="252" width="65" height="23" rx="11.5" fill="#2B5146"/>
+    <text x="1089" y="268" text-anchor="middle" fill="#D9ECCB" font-size="11">按住中</text>
+    <text x="863" y="306" fill="#B7CEC1" font-size="14">01　打开系统设置</text>
+    <rect x="856" y="319" width="272" height="39" rx="8" fill="#C4EB9F"/>
+    <text x="863" y="344" fill="#24462E" font-size="14" font-weight="600">02　找到「显示」与「缩放」</text>
+    <text x="863" y="389" fill="#B7CEC1" font-size="14">03　对照教程调整数值</text>
+    <path d="M819 297L819 331L828 321L838 334L845 328L835 315L849 312Z" fill="#173E35" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>
+    <text x="850" y="450" fill="#607A68" font-size="12">交互概念示意 · 非运行截图</text>
+
+    <path d="M52 470H1148" stroke="#CBDACD"/>
+    <text x="54" y="510" fill="#4B6958" font-size="15">框住参考</text>
+    <path d="M153 504H194M187 498L194 504L187 510" stroke="#9AB19F" stroke-width="1.5"/>
+    <text x="217" y="510" fill="#4B6958" font-size="15">按住查看</text>
+    <path d="M315 504H356M349 498L356 504L349 510" stroke="#9AB19F" stroke-width="1.5"/>
+    <text x="379" y="510" fill="#4B6958" font-size="15">滚轮标记</text>
+    <path d="M477 504H518M511 498L518 504L511 510" stroke="#9AB19F" stroke-width="1.5"/>
+    <text x="541" y="510" fill="#4B6958" font-size="15">松手继续</text>
+    <text x="1146" y="510" text-anchor="end" fill="#6D8372" font-size="13">开发中 / DESIGNED FOR A SINGLE SCREEN</text>
+  </g>
+</svg>

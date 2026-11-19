@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <StartupObject>HoldToPeek.Program</StartupObject>
+    <AssemblyName>HoldToPeek</AssemblyName>
+    <RootNamespace>HoldToPeek</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\HoldToPeek.ico</ApplicationIcon>
+    <Product>瞄一眼 · Hold to Peek</Product>
+    <Description>按住看参考，松手接着干。</Description>
+    <Company>Hold to Peek</Company>
+  </PropertyGroup>
+</Project>
