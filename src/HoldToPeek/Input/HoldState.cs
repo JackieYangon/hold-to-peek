@@ -8,20 +8,20 @@ namespace HoldToPeek.Input;
 /// </summary>
 internal sealed class HoldState
 {
-    private readonly bool[] _consumed = new bool[3];
-    private readonly bool[] _down = new bool[3];
-    private PeekTrigger _trigger;
+    private readonly bool[] _consumed = new bool[256];
+    private readonly bool[] _down = new bool[256];
+    private InputBinding _binding = new(5);
     private bool _enabled;
 
     public PeekTrigger Trigger
     {
-        get => _trigger;
-        set
-        {
-            if (_trigger != value)
-                Cancel();
-            _trigger = value;
-        }
+        set => Binding = InputBinding.FromLegacy(value);
+    }
+
+    public InputBinding Binding
+    {
+        get => _binding;
+        set { if (_binding != value) Cancel(); _binding = value; }
     }
 
     public bool Enabled
@@ -36,17 +36,22 @@ internal sealed class HoldState
     }
 
     public bool IsHeld { get; private set; }
-    public PeekTrigger? HeldTrigger { get; private set; }
+    public int? HeldKey { get; private set; }
 
     public bool Process(PeekTrigger trigger, bool down)
+        => ProcessKey(InputBinding.FromLegacy(trigger).Key, down, 0);
+
+    public bool ProcessKey(int key, bool down, int modifiers)
     {
-        int index = (int)trigger;
+        if (key < 0 || key >= 256) return false;
+        int index = key;
+        if (IsHeld && (modifiers & _binding.Modifiers) != _binding.Modifiers) Cancel();
         if (!down)
         {
             bool consumed = _consumed[index];
             _down[index] = false;
             _consumed[index] = false;
-            if (HeldTrigger == trigger)
+            if (HeldKey == key)
                 Cancel();
             return consumed;
         }
@@ -55,7 +60,7 @@ internal sealed class HoldState
             return _consumed[index]; // Auto-repeat cannot reactivate an Escape-cancelled hold.
 
         _down[index] = true;
-        if (!_enabled || trigger != _trigger)
+        if (!_enabled || key != _binding.Key || modifiers != _binding.Modifiers)
         {
             // A new native down supersedes any release debt left by watchdog recovery.
             _consumed[index] = false;
@@ -64,14 +69,14 @@ internal sealed class HoldState
 
         _consumed[index] = true;
         IsHeld = true;
-        HeldTrigger = trigger;
+        HeldKey = key;
         return true;
     }
 
     public void Cancel()
     {
         IsHeld = false;
-        HeldTrigger = null;
+        HeldKey = null;
     }
 
     public void ResetAfterInterruption()
@@ -84,9 +89,12 @@ internal sealed class HoldState
     }
 
     public void RecoverReleased(PeekTrigger trigger)
+        => RecoverReleased(InputBinding.FromLegacy(trigger).Key);
+
+    public void RecoverReleased(int key)
     {
-        _down[(int)trigger] = false;
-        if (HeldTrigger == trigger)
+        _down[key] = false;
+        if (HeldKey == key)
             Cancel();
         // Retain _consumed so a delayed up does not reach an app that never received its down.
     }

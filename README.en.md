@@ -4,7 +4,7 @@
 
 <p align="center"><a href="README.md">简体中文</a> · <b>English</b></p>
 
-> Source update: 1.1.0 adds F1 capture. Downloads and demos below show the published 1.0.0 release. See the [changelog](docs/CHANGELOG.md).
+> Source update: 1.2.0 adds quick capture and custom shortcuts. Downloads and demos below show the published 1.0.0 release. See the [changelog](docs/CHANGELOG.md).
 
 <p align="center"><b>Keep your reference close, even with just one screen.</b><br />Hold to peek. Release to work. Pick up at the same line next time.</p>
 

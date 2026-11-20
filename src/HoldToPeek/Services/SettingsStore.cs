@@ -11,6 +11,10 @@ namespace HoldToPeek.Services;
 public sealed record AppSettings
 {
     public PeekTrigger Trigger { get; init; } = PeekTrigger.MouseBack;
+    public InputBinding? PeekBinding { get; init; }
+    public InputBinding CaptureBinding { get; init; } = new(0x70);
+    [JsonIgnore]
+    public InputBinding EffectivePeekBinding => PeekBinding ?? InputBinding.FromLegacy(Trigger);
     public double LineHeight { get; init; } = 28;
     public bool HasSeenWelcome { get; init; }
 }
@@ -104,6 +108,8 @@ public sealed class SettingsStore
 
     private static bool IsValid(AppSettings settings) =>
         Enum.IsDefined(settings.Trigger) &&
+        settings.EffectivePeekBinding.IsValid && settings.CaptureBinding is { IsValid: true, IsMouse: false } &&
+        settings.EffectivePeekBinding.Key != settings.CaptureBinding.Key &&
         double.IsFinite(settings.LineHeight) &&
         settings.LineHeight >= 8 && settings.LineHeight <= 120;
 }

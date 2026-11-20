@@ -36,6 +36,12 @@ internal sealed class CaptureHotkey : IDisposable
         return 0;
     }
 
+    public void Suspend()
+    {
+        if (_registered) UnregisterHotKey(_source.Handle, 1);
+        _registered = false;
+    }
+
     public void Dispose()
     {
         if (_registered) UnregisterHotKey(_source.Handle, 1);

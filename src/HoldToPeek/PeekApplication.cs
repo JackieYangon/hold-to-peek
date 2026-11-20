@@ -58,7 +58,7 @@ internal sealed class PeekApplication : Application
             _progress.LineHeight = _settings.LineHeight;
             _peek = new PeekWindow();
             CreateTray();
-            _input.Trigger = _settings.Trigger;
+            _input.Binding = _settings.EffectivePeekBinding;
             _input.HoldChanged += held => Post(() => OnHoldChanged(held));
             _input.WheelMoved += delta =>
             {
@@ -71,8 +71,8 @@ internal sealed class PeekApplication : Application
             _input.Start();
             _captureHotkey = new CaptureHotkey();
             _captureHotkey.Pressed += () => Post(BeginCapture);
-            try { _captureHotkey.Register(); }
-            catch (Exception error) { Notify("F1 框选快捷键不可用", error.Message); }
+            try { _captureHotkey.Register((uint)_settings.CaptureBinding.Key, (uint)_settings.CaptureBinding.Modifiers); }
+            catch (Exception error) { Notify("框选快捷键不可用", error.Message); }
             _showRegistration = ThreadPool.RegisterWaitForSingleObject(_showSignal,
                 (_, _) => Post(ShowSettings), null, Timeout.Infinite, false);
             SystemEvents.SessionSwitch += OnSessionSwitch;
@@ -125,6 +125,7 @@ internal sealed class PeekApplication : Application
         }
         if (_busy) return;
         HidePeek();
+        _captureHotkey?.Suspend();
         _busy = true;
         RefreshState();
         var window = new SettingsWindow(_settings, _version, _peek?.Reference, _progress.Position, _paused);
@@ -137,10 +138,12 @@ internal sealed class PeekApplication : Application
             {
                 _settings = changed;
                 _progress.LineHeight = changed.LineHeight;
-                _input.Trigger = changed.Trigger;
+                _input.Binding = changed.EffectivePeekBinding;
                 try { _store.Save(changed); }
                 catch (Exception error) { Notify("设置暂未保存", $"本次仍会使用新设置。{error.Message}"); }
             }
+            try { _captureHotkey?.Register((uint)_settings.CaptureBinding.Key, (uint)_settings.CaptureBinding.Modifiers); }
+            catch (Exception error) { Notify("框选快捷键不可用", error.Message); }
             RefreshState();
             if (window.CaptureRequested) Post(() => BeginCapture(returnToSettings: true));
         };
@@ -248,7 +251,11 @@ internal sealed class PeekApplication : Application
             _pauseItem.Text = _paused ? "恢复瞄一眼" : "暂停瞄一眼";
             _pauseItem.Enabled = !_busy && !_inputFailed && _hasReference;
         }
-        if (_captureItem is not null) _captureItem.Enabled = !_busy;
+        if (_captureItem is not null)
+        {
+            _captureItem.Enabled = !_busy;
+            _captureItem.Text = "框选参考…  " + BindingEditor.Display(_settings.CaptureBinding);
+        }
         if (_resetItem is not null) _resetItem.Enabled = !_busy && _hasReference;
         if (_clearItem is not null) _clearItem.Enabled = !_busy && _hasReference;
         string status = _inputFailed ? "输入监听不可用，请重启" : _busy ? "设置或框选中 · 暂不接管按键" : _paused
@@ -257,12 +264,7 @@ internal sealed class PeekApplication : Application
         if (_tray is not null) _tray.Text = "瞄一眼 · " + status;
     }
 
-    private string TriggerName() => _settings.Trigger switch
-    {
-        PeekTrigger.MouseForward => "鼠标前进侧键",
-        PeekTrigger.F8 => " F8 ",
-        _ => "鼠标后退侧键"
-    };
+    private string TriggerName() => BindingEditor.Display(_settings.EffectivePeekBinding);
 
     private void OnInputFailed(Exception error)
     {

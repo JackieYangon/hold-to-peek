@@ -1,5 +1,11 @@
 # 更新记录 / Changelog
 
+## 1.2.0
+
+- 框选与按住查看支持自定义键盘组合；查看支持鼠标中键与侧键，旧偏好自动兼容。
+- Record custom keyboard chords for capture and peek, or middle/side mouse buttons for peek. Existing preferences remain compatible.
+- 拒绝冲突和保留按键，编辑时暂停全局输入；源码更新，下载包仍为 1.0.0。
+
 ## 1.1.0
 
 - 新增全局 F1 快速框选；长按不会重复开始。快捷键冲突时提示并保留托盘入口。

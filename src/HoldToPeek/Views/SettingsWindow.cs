@@ -18,7 +18,9 @@ public sealed class SettingsWindow : Window
     private static readonly Brush Paper = Brush("#F4F6EF");
     private static readonly Brush Line = Brush("#D7E2D6");
     private static readonly Brush Accent = Brush("#C4EB9F");
-    private readonly ComboBox _triggerSelector;
+    private readonly BindingEditor _peekBinding;
+    private readonly BindingEditor _captureBinding;
+    private readonly AppSettings _current;
     private readonly Slider _lineHeightSlider;
     private readonly TextBlock _lineHeightText;
     private readonly TextBlock _triggerHint;
@@ -27,6 +29,7 @@ public sealed class SettingsWindow : Window
     public SettingsWindow(AppSettings current, string version, BitmapSource? reference = null, double position = 0, bool paused = false)
     {
         ArgumentNullException.ThrowIfNull(current);
+        _current = current;
         Title = "瞄一眼 · 设置";
         FontFamily = new FontFamily("Microsoft YaHei UI, Segoe UI");
         FontSize = 14;
@@ -47,10 +50,10 @@ public sealed class SettingsWindow : Window
             if (e.Key != System.Windows.Input.Key.Escape)
                 return;
 
-            // Escape dismisses an open choice list before dismissing its window.
-            if (_triggerSelector is { IsDropDownOpen: true })
+            if (_peekBinding is { IsRecording: true } || _captureBinding is { IsRecording: true })
             {
-                _triggerSelector.IsDropDownOpen = false;
+                _peekBinding?.CancelRecording();
+                _captureBinding?.CancelRecording();
                 e.Handled = true;
                 return;
             }
@@ -148,35 +151,18 @@ public sealed class SettingsWindow : Window
             Child = settings
         });
 
+        settings.Children.Add(Text("快速框选键", 15, Ink, FontWeights.SemiBold));
+        _captureBinding = new BindingEditor(current.CaptureBinding, false);
+        AutomationProperties.SetName(_captureBinding, "快速框选快捷键");
+        settings.Children.Add(_captureBinding);
         settings.Children.Add(Text("按住哪个键查看？", 15, Ink, FontWeights.SemiBold));
-        _triggerSelector = new ComboBox
-        {
-            Margin = new Thickness(0, 10, 0, 0),
-            Padding = new Thickness(10, 7, 10, 7),
-            MinHeight = 39,
-            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-            Background = Brushes.White,
-            BorderBrush = Line,
-            FontSize = 14,
-            TabIndex = 1
-        };
-        AutomationProperties.SetName(_triggerSelector, "按住触发键");
-        _triggerSelector.Items.Add(TriggerChoice(PeekTrigger.MouseBack, "鼠标后退侧键 · X1"));
-        _triggerSelector.Items.Add(TriggerChoice(PeekTrigger.MouseForward, "鼠标前进侧键 · X2"));
-        _triggerSelector.Items.Add(TriggerChoice(PeekTrigger.F8, "键盘 F8"));
-        _triggerSelector.SelectedIndex = current.Trigger switch
-        {
-            PeekTrigger.MouseForward => 1,
-            PeekTrigger.F8 => 2,
-            _ => 0
-        };
-        settings.Children.Add(_triggerSelector);
-        _triggerHint = Text(string.Empty, 12, Muted);
+        _peekBinding = new BindingEditor(current.EffectivePeekBinding, true);
+        AutomationProperties.SetName(_peekBinding, "按住查看快捷键");
+        settings.Children.Add(_peekBinding);
+        _triggerHint = Text("点击后按下想用的按键，可搭配 Ctrl、Alt、Shift；查看还支持鼠标中键和侧键。Esc、系统保留组合和 F12 不可用。", 12, Muted);
         _triggerHint.Margin = new Thickness(0, 8, 0, 20);
         _triggerHint.LineHeight = 19;
         settings.Children.Add(_triggerHint);
-        _triggerSelector.SelectionChanged += (_, _) => UpdateTriggerHint();
-        UpdateTriggerHint();
 
         var lineHeading = new Grid();
         lineHeading.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -269,9 +255,16 @@ public sealed class SettingsWindow : Window
 
     private void Accept(bool capture)
     {
-        SavedSettings = new AppSettings
+        if (_peekBinding.IsRecording || _captureBinding.IsRecording) return;
+        if (_peekBinding.Binding.Key == _captureBinding.Binding.Key)
         {
-            Trigger = SelectedTrigger,
+            MessageBox.Show(this, "框选与查看请使用不同的主按键，避免输入冲突。", "快捷键冲突", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        SavedSettings = _current with
+        {
+            PeekBinding = _peekBinding.Binding,
+            CaptureBinding = _captureBinding.Binding,
             LineHeight = Math.Round(_lineHeightSlider.Value),
             HasSeenWelcome = true
         };
@@ -279,22 +272,11 @@ public sealed class SettingsWindow : Window
         Close();
     }
 
-    private PeekTrigger SelectedTrigger =>
-        (_triggerSelector.SelectedItem as ComboBoxItem)?.Tag is PeekTrigger trigger
-            ? trigger : PeekTrigger.MouseBack;
-
-    private void UpdateTriggerHint() => _triggerHint.Text = SelectedTrigger == PeekTrigger.F8
-        ? "已有参考时，按住 F8 查看，松开收起。暂停后 F8 恢复原来的功能。"
-        : "已有参考时接管这个侧键。暂停后，侧键恢复原来的前进或后退功能。";
-
     private void UpdateLineHeightText()
     {
         _lineHeightText.Text = Math.Round(_lineHeightSlider.Value).ToString(CultureInfo.CurrentCulture) + " 像素 / 格";
         _referencePreview?.SetLineHeight(_lineHeightSlider.Value);
     }
-
-    private static ComboBoxItem TriggerChoice(PeekTrigger trigger, string label) =>
-        new() { Content = label, Tag = trigger, Padding = new Thickness(4, 5, 4, 5) };
 
     private static void AddStep(Grid grid, int row, int column, string number, string heading, string description)
     {

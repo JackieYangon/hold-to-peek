@@ -29,7 +29,7 @@ public sealed class GlobalInputService : IDisposable
     private bool _escapeConsumed;
     private bool _sawAsyncDown;
     private bool _watchdogResetRequested;
-    private PeekTrigger? _watchedTrigger;
+    private int? _watchedTrigger;
 
     public GlobalInputService()
     {
@@ -42,17 +42,17 @@ public sealed class GlobalInputService : IDisposable
     public event Action? CancelRequested;
     public event Action<Exception>? Failed;
 
-    public PeekTrigger Trigger
+    public InputBinding Binding
     {
-        get { lock (_gate) return _state.Trigger; }
+        get { lock (_gate) return _state.Binding; }
         set
         {
-            if (!Enum.IsDefined(value))
+            if (value is not { IsValid: true })
                 throw new ArgumentOutOfRangeException(nameof(value));
             lock (_gate)
             {
                 bool before = _state.IsHeld;
-                _state.Trigger = value;
+                _state.Binding = value;
                 PublishTransition(before);
             }
             RequestTimerSync();
@@ -197,10 +197,13 @@ public sealed class GlobalInputService : IDisposable
                 uint button = input.MouseData >> 16;
                 if (button is 1 or 2)
                 {
-                    PeekTrigger trigger = button == 1 ? PeekTrigger.MouseBack : PeekTrigger.MouseForward;
-                    if (ProcessTrigger(trigger, message == 0x020B))
+                    if (ProcessTrigger(button == 1 ? 5 : 6, message == 0x020B))
                         return 1;
                 }
+            }
+            else if (message is 0x0207 or 0x0208)
+            {
+                if (ProcessTrigger(4, message == 0x0207)) return 1;
             }
             else if (message is 0x020A or 0x020E)
             {
@@ -238,7 +241,7 @@ public sealed class GlobalInputService : IDisposable
             if (!down && !up)
                 return Native.CallNextHookEx(0, code, message, data);
             Native.KeyboardData input = Marshal.PtrToStructure<Native.KeyboardData>(data);
-            if (input.VirtualKey == 0x77 && ProcessTrigger(PeekTrigger.F8, down))
+            if (ProcessTrigger((int)input.VirtualKey, down))
                 return 1;
             if (input.VirtualKey == 0x1B)
             {
@@ -277,17 +280,25 @@ public sealed class GlobalInputService : IDisposable
         return Native.CallNextHookEx(0, code, message, data);
     }
 
-    private bool ProcessTrigger(PeekTrigger trigger, bool down)
+    private bool ProcessTrigger(int key, bool down)
     {
         bool consume;
         lock (_gate)
         {
             bool before = _state.IsHeld;
-            consume = _state.Process(trigger, down);
+            consume = _state.ProcessKey(key, down, CurrentModifiers(key, down));
             PublishTransition(before);
         }
         SyncWatchdog();
         return consume;
+    }
+
+    private static int CurrentModifiers(int key, bool down)
+    {
+        int modifiers = (Native.GetAsyncKeyState(0x12) < 0 ? 1 : 0) |
+            (Native.GetAsyncKeyState(0x11) < 0 ? 2 : 0) | (Native.GetAsyncKeyState(0x10) < 0 ? 4 : 0);
+        int changed = key switch { 18 or 164 or 165 => 1, 17 or 162 or 163 => 2, 16 or 160 or 161 => 4, _ => 0 };
+        return down ? modifiers | changed : modifiers & ~changed;
     }
 
     private void PublishTransition(bool previous)
@@ -320,11 +331,11 @@ public sealed class GlobalInputService : IDisposable
                 StopWatchdog();
                 return;
             }
-            if (_timerId != 0 && _watchedTrigger != _state.HeldTrigger)
+            if (_timerId != 0 && _watchedTrigger != _state.HeldKey)
                 StopWatchdog();
             if (_timerId == 0)
             {
-                _watchedTrigger = _state.HeldTrigger;
+                _watchedTrigger = _state.HeldKey;
                 _sawAsyncDown = false;
                 _timerId = Native.SetTimer(0, 0, 150, 0);
             }
@@ -335,17 +346,11 @@ public sealed class GlobalInputService : IDisposable
     {
         lock (_gate)
         {
-            if (!_state.IsHeld || _watchedTrigger is not PeekTrigger trigger)
+            if (!_state.IsHeld || _watchedTrigger is not int key)
             {
                 StopWatchdog();
                 return;
             }
-            int key = trigger switch
-            {
-                PeekTrigger.MouseBack => 0x05,
-                PeekTrigger.MouseForward => 0x06,
-                _ => 0x77
-            };
             bool down = Native.GetAsyncKeyState(key) < 0;
             // Suppressed low-level input may never update async key state. Only infer a
             // missing release after a real down was observed, not from an initial false.
@@ -354,7 +359,7 @@ public sealed class GlobalInputService : IDisposable
             else if (_sawAsyncDown)
             {
                 bool before = _state.IsHeld;
-                _state.RecoverReleased(trigger);
+                _state.RecoverReleased(key);
                 PublishTransition(before);
                 StopWatchdog();
             }
