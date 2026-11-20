@@ -6,7 +6,12 @@
 
 <p align="center"><b>只有一块屏幕，也能把参考放在手边。</b><br />按住看一眼，松手接着干，再按还在刚才那一行。</p>
 
-<p align="center"><b>Windows x64</b> · <b>v1.0.0</b> · <b>免安装 · 自带运行时</b></p>
+<p align="center">
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/%E7%89%88%E6%9C%AC-v1.0.0-2563eb?style=flat-square" alt="版本: v1.0.0" /></a>
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20x64-0078d4?style=flat-square" alt="平台: Windows x64" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/%E5%8D%8F%E8%AE%AE-MIT-22c55e?style=flat-square" alt="协议: MIT" /></a>
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/%E5%85%8D%E5%AE%89%E8%A3%85-%E8%87%AA%E5%B8%A6%E8%BF%90%E8%A1%8C%E6%97%B6-7c3aed?style=flat-square" alt="免安装: 自带运行时" /></a>
+</p>
 
 <p align="center">
   <a href="#需要的那几行就在鼠标旁">使用场景</a> ·

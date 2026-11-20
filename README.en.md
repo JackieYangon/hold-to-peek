@@ -6,7 +6,12 @@
 
 <p align="center"><b>Keep your reference close, even with just one screen.</b><br />Hold to peek. Release to work. Pick up at the same line next time.</p>
 
-<p align="center"><b>Windows x64</b> · <b>v1.0.0</b> · <b>Portable · Runtime included</b></p>
+<p align="center">
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Version-v1.0.0-2563eb?style=flat-square" alt="Version: v1.0.0" /></a>
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Platform-Windows%20x64-0078d4?style=flat-square" alt="Platform: Windows x64" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="License: MIT" /></a>
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Portable-Runtime%20included-7c3aed?style=flat-square" alt="Portable: Runtime included" /></a>
+</p>
 
 <p align="center">
   <a href="#the-few-lines-you-need-right-by-your-cursor">Use cases</a> ·
