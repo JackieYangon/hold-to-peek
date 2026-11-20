@@ -1,16 +1,17 @@
-> 源码进度：1.5.0 新增快速框选、自定义按键、独立页面、自启与 CPU 优先级；下方下载和动图对应已发布的 1.0.0。详见[更新记录](docs/CHANGELOG.md)。
-
 <p align="center">
   <img src="docs/assets/header-zh.svg" width="100%" alt="瞄一眼 · Hold to Peek：按住看参考，松手接着干。交互概念示意。" />
 </p>
 
 <p align="center"><b>简体中文</b> · <a href="README.en.md">English</a></p>
 
+> 源码进度：2.0.0，包含 Windows 快捷键与设置改进，以及 [Ubuntu X11/Xorg 实验版](docs/UBUNTU.md)；下方下载和动图对应已发布的 1.0.0。详见[更新记录](docs/CHANGELOG.md)。
+
 <p align="center"><b>只有一块屏幕，也能把参考放在手边。</b><br />按住看一眼，松手接着干，再按还在刚才那一行。</p>
 
 <p align="center">
-  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/%E7%89%88%E6%9C%AC-v1.0.0-2563eb?style=flat-square" alt="版本: v1.0.0" /></a>
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0-2563eb?style=flat-square" alt="已发布: v1.0.0" /></a>
   <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20x64-0078d4?style=flat-square" alt="平台: Windows x64" /></a>
+  <a href="docs/CHANGELOG.md"><img src="https://img.shields.io/badge/Source-v2.0.0-f59e0b?style=flat-square" alt="开发版: v2.0.0" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/%E5%8D%8F%E8%AE%AE-MIT-22c55e?style=flat-square" alt="协议: MIT" /></a>
   <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/%E5%85%8D%E5%AE%89%E8%A3%85-%E8%87%AA%E5%B8%A6%E8%BF%90%E8%A1%8C%E6%97%B6-7c3aed?style=flat-square" alt="免安装: 自带运行时" /></a>
 </p>

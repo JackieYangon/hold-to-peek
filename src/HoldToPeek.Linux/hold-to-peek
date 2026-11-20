@@ -1,0 +1,12 @@
+#!/usr/bin/python3
+import sys
+from pathlib import Path
+
+installed = Path("/usr/share/hold-to-peek")
+source = Path(__file__).resolve().parent
+sys.path.insert(0, str(source if (source / "hold_to_peek").exists() else installed))
+try:
+    from hold_to_peek.app import main
+except ImportError as error:
+    sys.exit("Missing Ubuntu dependencies. Install the .deb with apt, or see docs/UBUNTU.md. " + str(error))
+sys.exit(main())

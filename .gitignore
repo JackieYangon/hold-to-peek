@@ -105,6 +105,7 @@ packages/
 *.nupkg
 *.snupkg
 *.msi
+*.deb
 *.msix
 *.msixbundle
 *.appx

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Hold to Peek
+Name[zh_CN]=瞄一眼
+Comment=Hold to see your reference, release to keep working
+Comment[zh_CN]=按住看参考，松手接着干
+Exec=hold-to-peek
+Icon=view-reveal-symbolic
+Terminal=false
+Categories=Utility;
+StartupNotify=true

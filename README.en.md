@@ -4,13 +4,14 @@
 
 <p align="center"><a href="README.md">简体中文</a> · <b>English</b></p>
 
-> Source update: 1.5.0 adds custom shortcuts, separate pages, startup and CPU priority settings. Downloads and demos below show the published 1.0.0 release. See the [changelog](docs/CHANGELOG.md).
+> Source update: 2.0.0 includes Windows shortcut/settings improvements and an [Ubuntu X11/Xorg experimental edition](docs/UBUNTU.md). Downloads and demos below show the published 1.0.0 release. See the [changelog](docs/CHANGELOG.md).
 
 <p align="center"><b>Keep your reference close, even with just one screen.</b><br />Hold to peek. Release to work. Pick up at the same line next time.</p>
 
 <p align="center">
-  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Version-v1.0.0-2563eb?style=flat-square" alt="Version: v1.0.0" /></a>
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0-2563eb?style=flat-square" alt="Release: v1.0.0" /></a>
   <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Platform-Windows%20x64-0078d4?style=flat-square" alt="Platform: Windows x64" /></a>
+  <a href="docs/CHANGELOG.md"><img src="https://img.shields.io/badge/Source-v2.0.0-f59e0b?style=flat-square" alt="Source: v2.0.0" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="License: MIT" /></a>
   <a href="https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Portable-Runtime%20included-7c3aed?style=flat-square" alt="Portable: Runtime included" /></a>
 </p>
