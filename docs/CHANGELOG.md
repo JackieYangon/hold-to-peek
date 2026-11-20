@@ -1,5 +1,10 @@
 # 更新记录 / Changelog
 
+## 1.4.0
+
+- 按键设置移至独立页面，参考页专注于行距与试读；切页取消未完成录入。
+- Give shortcut settings their own page and cancel unfinished recording when navigating away.
+
 ## 1.3.0
 
 - 使用说明移至独立页面，随时可查看框选、阅读、暂停与隐私说明。

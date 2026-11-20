@@ -154,18 +154,33 @@ public sealed class SettingsWindow : Window
             Child = settings
         });
 
-        settings.Children.Add(Text("快速框选键", 15, Ink, FontWeights.SemiBold));
+        var keys = new StackPanel { Margin = new Thickness(26) };
+        keys.Children.Add(Text("按你顺手的方式来", 24, Ink, FontWeights.SemiBold));
+        var keyLead = Text("框选按一下，查看按住不放。点击下面的按键，再按下你想用的新组合。", 14, Muted);
+        keyLead.Margin = new Thickness(0, 12, 0, 24);
+        keys.Children.Add(keyLead);
+        keys.Children.Add(Text("快速框选键", 15, Ink, FontWeights.SemiBold));
         _captureBinding = new BindingEditor(current.CaptureBinding, false);
         AutomationProperties.SetName(_captureBinding, "快速框选快捷键");
-        settings.Children.Add(_captureBinding);
-        settings.Children.Add(Text("按住哪个键查看？", 15, Ink, FontWeights.SemiBold));
+        keys.Children.Add(_captureBinding);
+        keys.Children.Add(Text("按住哪个键查看？", 15, Ink, FontWeights.SemiBold));
         _peekBinding = new BindingEditor(current.EffectivePeekBinding, true);
         AutomationProperties.SetName(_peekBinding, "按住查看快捷键");
-        settings.Children.Add(_peekBinding);
+        keys.Children.Add(_peekBinding);
         _triggerHint = Text("点击后按下想用的按键，可搭配 Ctrl、Alt、Shift；查看还支持鼠标中键和侧键。Esc、系统保留组合和 F12 不可用。", 12, Muted);
         _triggerHint.Margin = new Thickness(0, 8, 0, 20);
         _triggerHint.LineHeight = 19;
-        settings.Children.Add(_triggerHint);
+        keys.Children.Add(_triggerHint);
+
+        keys.Children.Add(Text("两个动作需要不同的主按键。保存后生效；若被其他程序占用，会提示你更换框选快捷键。Esc 取消录入，关闭或取消不会保存改动。", 13, Muted));
+        _pages.Items.Insert(1, new TabItem { Header = "按键设置", Padding = new Thickness(16, 10, 16, 10),
+            Content = new ScrollViewer { Content = keys, VerticalScrollBarVisibility = ScrollBarVisibility.Auto } });
+        _pages.SelectionChanged += (_, e) =>
+        {
+            if (e.Source != _pages) return;
+            _peekBinding.CancelRecording();
+            _captureBinding.CancelRecording();
+        };
 
         var lineHeading = new Grid();
         lineHeading.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
