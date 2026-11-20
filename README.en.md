@@ -6,16 +6,20 @@
 
 <p align="center"><b>Keep your reference close, even with just one screen.</b><br />Hold to peek. Release to work. Pick up at the same line next time.</p>
 
-<p align="center"><b>Windows</b> · <b>In development</b> · First release target: <b>1.0.0</b></p>
+<p align="center"><b>Windows x64</b> · <b>v1.0.0</b> · <b>Portable · Runtime included</b></p>
 
 <p align="center">
   <a href="#the-few-lines-you-need-right-by-your-cursor">Use cases</a> ·
   <a href="#four-actions-then-back-to-work">How it works</a> ·
-  <a href="#get-hold-to-peek">Get the app</a> ·
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/download/v1.0.0/hold-to-peek-1.0.0-win-x64.zip">Download v1.0.0</a> ·
   <a href="https://github.com/JackieYangon/hold-to-peek/issues">Feedback</a>
 </p>
 
-> **The first release is in development. No verified download is available yet.** The banner is a concept illustration, not a screenshot of the running app.
+> The captioned GIFs below illustrate the interactions using sample content. They are not desktop recordings.
+
+![Hold a side button to show the reference, release to hide it, and hold again to resume](docs/assets/demos/hold-en.gif)
+
+**[Download the portable Windows x64 app](https://github.com/JackieYangon/hold-to-peek/releases/download/v1.0.0/hold-to-peek-1.0.0-win-x64.zip)** · [Read the v1.0.0 release notes](https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0)
 
 ## The few lines you need, right by your cursor
 
@@ -34,7 +38,7 @@ Made for the moments when you have one laptop screen and need to read while you 
 
 ## Four actions, then back to work
 
-The first release is built around this flow:
+Get started in four actions:
 
 1. **Capture.** Choose “框选参考” (Capture reference) from the tray menu and select the area you need.
 2. **Hold.** Return to your work and hold the trigger. Your reference appears beside the cursor without taking focus from the active window.
@@ -56,9 +60,47 @@ The highlight marks your reading position. It does not recognize text or identif
 
 **Spacing feels off? Adjust it with your reference in view.** Settings lets you try the current screenshot and see the highlight change as you move the slider, without losing your reading position. If you start a capture from settings, Esc returns you there and keeps the existing reference.
 
+## See it once, then try it
+
+### Capture only what you need
+
+Start a capture from the tray, drag around your reference, and release. Esc or right-click cancels while keeping the previous reference.
+
+![Start from the tray, drag to select the reference area, and release to finish](docs/assets/demos/capture-en.gif)
+
+### Keep your place as you read
+
+Scroll while holding the trigger to move the highlight. Hold Shift as well to fine-tune its position by one original-image pixel per notch.
+
+![Move the highlight with the wheel and fine-tune with Shift and the wheel](docs/assets/demos/wheel-en.gif)
+
+### Adjust spacing without guessing
+
+Move the slider while looking at the current reference, then try a few lines. The preview keeps your original reading position intact. Save when it feels right.
+
+![Adjust the spacing slider, see the highlight change, and try the next line](docs/assets/demos/spacing-en.gif)
+
+### No side button? Use F8
+
+Select “键盘 F8” (Keyboard F8) in settings and save. Hold to view and release to hide, just like a mouse side button.
+
+![Choose F8 as the trigger, hold it to show the reference, and release to hide](docs/assets/demos/keyboard-en.gif)
+
+### Get your button back whenever you need it
+
+Pause from the tray when you need the side button's normal forward or back action. Resume to return to the same reference and reading position.
+
+![Pause from the tray to restore normal button behavior, then resume peeking](docs/assets/demos/pause-en.gif)
+
 ## Get Hold to Peek
 
-Development and validation are underway. **There is no verified app or installer to download yet.** A download link will appear here when a usable release is ready.
+The current version is **1.0.0 for Windows x64**, a portable build with the .NET runtime included. No SDK installation is needed.
+
+1. [Download the ZIP](https://github.com/JackieYangon/hold-to-peek/releases/download/v1.0.0/hold-to-peek-1.0.0-win-x64.zip) and extract it to a folder you want to keep.
+2. Open `HoldToPeek.exe`, choose a trigger, and select “框选参考” (Capture reference).
+3. To exit, right-click the system tray icon and choose “退出” (Exit).
+
+[Release notes and SHA256 checksum](https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0)
 
 If this is the tool you have been looking for, leave a **Star** or tell us in [Issues](https://github.com/JackieYangon/hold-to-peek/issues) which two windows you keep switching between.
 

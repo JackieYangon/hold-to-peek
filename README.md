@@ -6,16 +6,20 @@
 
 <p align="center"><b>只有一块屏幕，也能把参考放在手边。</b><br />按住看一眼，松手接着干，再按还在刚才那一行。</p>
 
-<p align="center"><b>Windows</b> · <b>开发中</b> · 首版目标 <b>1.0.0</b></p>
+<p align="center"><b>Windows x64</b> · <b>v1.0.0</b> · <b>免安装 · 自带运行时</b></p>
 
 <p align="center">
   <a href="#需要的那几行就在鼠标旁">使用场景</a> ·
   <a href="#四个动作接着干">如何使用</a> ·
-  <a href="#获取瞄一眼">获取应用</a> ·
+  <a href="https://github.com/JackieYangon/hold-to-peek/releases/download/v1.0.0/hold-to-peek-1.0.0-win-x64.zip">下载 v1.0.0</a> ·
   <a href="https://github.com/JackieYangon/hold-to-peek/issues">反馈与建议</a>
 </p>
 
-> **首版正在开发，暂未提供经过验证的下载包。** 上方为交互概念图，非软件运行截图。
+> 下方动图均带操作字幕，使用演示内容说明交互，非实机录屏。
+
+![按住侧键显示参考，松开隐藏，再次按住保留阅读位置](docs/assets/demos/hold-zh.gif)
+
+**[下载 Windows x64 免安装版](https://github.com/JackieYangon/hold-to-peek/releases/download/v1.0.0/hold-to-peek-1.0.0-win-x64.zip)** · [查看 v1.0.0 发布说明](https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0)
 
 ## 需要的那几行，就在鼠标旁
 
@@ -34,7 +38,7 @@
 
 ## 四个动作，接着干
 
-首版围绕这套流程设计：
+开始使用只需要四个动作：
 
 1. **框住。** 从托盘菜单选择「框选参考」，留下需要看的那一块。
 2. **按住。** 切回工作窗口，按住触发键，参考在鼠标旁出现，不抢走原窗口焦点。
@@ -56,9 +60,47 @@
 
 **行距不合适？直接看着参考调。** 设置里可以用当前截图试读，拖动滑块就能看到高亮变化；试读不会打乱原来的阅读位置。从设置开始框选后，按 Esc 取消会回到设置，原参考仍保留。
 
+## 看一遍，就会用
+
+### 只截需要看的内容
+
+从托盘开始框选，拖出参考区域，松开完成。想重来？按 Esc 或右键取消，旧参考仍然保留。
+
+![从托盘开始框选，拖动选取参考内容，松开完成](docs/assets/demos/capture-zh.gif)
+
+### 读到哪，就标到哪
+
+按住查看时，滚轮移动高亮线。想对得更准，按住 Shift 再滚动，每格微调一个原图像素。
+
+![滚轮移动高亮，Shift 加滚轮精细调整阅读位置](docs/assets/demos/wheel-zh.gif)
+
+### 行距不用靠猜
+
+在设置里看着当前参考拖动滑块，再试读几行。试读不会改动原来的阅读位置，满意后保存即可。
+
+![调整行距滑块，观察高亮变化并试读下一行](docs/assets/demos/spacing-zh.gif)
+
+### 没有侧键，也能用
+
+在设置里选择「键盘 F8」并保存。按住查看，松开收起，使用方式一样。
+
+![把触发键改成 F8，按住显示参考，松开隐藏](docs/assets/demos/keyboard-zh.gif)
+
+### 按键的原功能，随时还给你
+
+需要用侧键前进或后退时，在托盘菜单暂停。恢复后，参考和阅读位置都还在。
+
+![托盘暂停后恢复侧键原功能，再恢复瞄一眼继续查看](docs/assets/demos/pause-zh.gif)
+
 ## 获取瞄一眼
 
-目前仍在开发与验证中，**暂未提供经过验证的程序或安装包**。可用版本准备好后，会在这里提供获取方式。
+当前版本为 **1.0.0 Windows x64 免安装版**，自带 .NET 运行时，不用安装 SDK。
+
+1. [下载 ZIP](https://github.com/JackieYangon/hold-to-peek/releases/download/v1.0.0/hold-to-peek-1.0.0-win-x64.zip)，解压到你希望保留的位置。
+2. 双击 `HoldToPeek.exe`，选择触发键，点击「框选参考」。
+3. 使用结束后，右键系统托盘中的图标，选择「退出」。
+
+[发布说明与 SHA256 校验文件](https://github.com/JackieYangon/hold-to-peek/releases/tag/v1.0.0)
 
 如果这正是你需要的小工具，欢迎点一个 **Star**，或到 [Issues](https://github.com/JackieYangon/hold-to-peek/issues) 说说你最常在哪两个窗口之间来回切换。
 
