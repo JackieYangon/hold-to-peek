@@ -12,6 +12,7 @@ try {
     Assert-DotnetSuccess
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'docs/QUICK_START.md') -Destination (Join-Path $outputDirectory 'README.zh-CN.md')
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'VERSION') -Destination $outputDirectory
+    Copy-Item -LiteralPath (Join-Path $ProjectRoot 'LICENSE') -Destination $outputDirectory
     $archive = "$outputDirectory.zip"
     Compress-Archive -Path (Join-Path $outputDirectory '*') -DestinationPath $archive -Force
     Write-Output "Portable build: $outputDirectory"

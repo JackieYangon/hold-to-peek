@@ -112,3 +112,7 @@ If this is the tool you have been looking for, leave a **Star** or tell us in [I
 - **The app interface is currently in Simplified Chinese.** This English guide includes the relevant menu labels.
 
 [Development notes (Chinese)](docs/BUILD.md)
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
