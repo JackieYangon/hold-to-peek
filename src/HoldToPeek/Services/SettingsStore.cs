@@ -17,6 +17,8 @@ public sealed record AppSettings
     public InputBinding EffectivePeekBinding => PeekBinding ?? InputBinding.FromLegacy(Trigger);
     public double LineHeight { get; init; } = 28;
     public bool HasSeenWelcome { get; init; }
+    public bool StartAtLogin { get; init; }
+    public bool HighPriority { get; init; }
 }
 
 public sealed class SettingsStore

@@ -19,6 +19,8 @@ internal sealed class PeekApplication : Application
 {
     private readonly EventWaitHandle _showSignal;
     private readonly SettingsStore _store = new();
+    private readonly RuntimePreferences _runtime = new();
+    private readonly bool _autostart;
     private readonly ReadingProgress _progress = new();
     private readonly GlobalInputService _input = new();
     private readonly string _version = typeof(PeekApplication).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0.0";
@@ -43,9 +45,10 @@ internal sealed class PeekApplication : Application
     private bool _inputFailed;
     private int _captureEpoch;
 
-    public PeekApplication(EventWaitHandle showSignal)
+    public PeekApplication(EventWaitHandle showSignal, bool autostart = false)
     {
         _showSignal = showSignal;
+        _autostart = autostart;
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
     }
 
@@ -58,6 +61,10 @@ internal sealed class PeekApplication : Application
             _progress.LineHeight = _settings.LineHeight;
             _peek = new PeekWindow();
             CreateTray();
+            try { _settings = _settings with { StartAtLogin = _runtime.StartAtLoginEnabled() }; }
+            catch (Exception error) { Notify("无法读取自启状态", error.Message); }
+            try { RuntimePreferences.SetHighPriority(_settings.HighPriority); }
+            catch (Exception error) { _settings = _settings with { HighPriority = false }; Notify("未启用高优先级", error.Message); }
             _input.Binding = _settings.EffectivePeekBinding;
             _input.HoldChanged += held => Post(() => OnHoldChanged(held));
             _input.WheelMoved += delta =>
@@ -82,7 +89,8 @@ internal sealed class PeekApplication : Application
             RefreshState();
             // An empty session always needs a reference. Opening this small window
             // makes a newly launched tray app discoverable without persisting captures.
-            ShowSettings();
+            if (!_autostart) ShowSettings();
+            else Notify("瞄一眼已启动", "在托盘打开设置或按框选快捷键开始；截图不会跨重启保存。");
             if (_store.LoadWarning is string warning) Notify("已恢复默认设置", warning);
         }
         catch (Exception error)
@@ -136,6 +144,10 @@ internal sealed class PeekApplication : Application
             _busy = false;
             if (window.SavedSettings is { } changed)
             {
+                try { _runtime.SetStartAtLogin(changed.StartAtLogin, Environment.ProcessPath!); }
+                catch (Exception error) { changed = changed with { StartAtLogin = _settings.StartAtLogin }; Notify("自启设置未应用", error.Message); }
+                try { RuntimePreferences.SetHighPriority(changed.HighPriority); }
+                catch (Exception error) { changed = changed with { HighPriority = _settings.HighPriority }; Notify("优先级设置未应用", error.Message); }
                 _settings = changed;
                 _progress.LineHeight = changed.LineHeight;
                 _input.Binding = changed.EffectivePeekBinding;

@@ -1,5 +1,10 @@
 # 更新记录 / Changelog
 
+## 1.5.0
+
+- 新增启动与运行页：可选登录自启、静默托盘启动和可恢复的 CPU High 优先级。默认均关闭，失败会提示。
+- Add opt-in login startup, quiet tray launch, and reversible High CPU scheduling priority with failure feedback.
+
 ## 1.4.0
 
 - 按键设置移至独立页面，参考页专注于行距与试读；切页取消未完成录入。

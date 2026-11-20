@@ -4,7 +4,7 @@
 
 <p align="center"><a href="README.md">简体中文</a> · <b>English</b></p>
 
-> Source update: 1.4.0 adds quick capture, custom shortcuts, and separate guide and shortcut pages. Downloads and demos below show the published 1.0.0 release. See the [changelog](docs/CHANGELOG.md).
+> Source update: 1.5.0 adds custom shortcuts, separate pages, startup and CPU priority settings. Downloads and demos below show the published 1.0.0 release. See the [changelog](docs/CHANGELOG.md).
 
 <p align="center"><b>Keep your reference close, even with just one screen.</b><br />Hold to peek. Release to work. Pick up at the same line next time.</p>
 

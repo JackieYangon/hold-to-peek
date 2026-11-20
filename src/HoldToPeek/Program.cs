@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Linq;
 using System.Windows;
 
 namespace HoldToPeek;
@@ -7,11 +8,12 @@ namespace HoldToPeek;
 internal static class Program
 {
     [STAThread]
-    private static int Main()
+    private static int Main(string[] args)
     {
         using var instance = new Mutex(true, @"Local\HoldToPeek.Application", out bool isFirst);
         if (!isFirst)
         {
+            if (args.Contains("--autostart")) return 0;
             try
             {
                 using var signal = EventWaitHandle.OpenExisting(@"Local\HoldToPeek.ShowSettings");
@@ -27,7 +29,7 @@ internal static class Program
         try
         {
             using var signal = new EventWaitHandle(false, EventResetMode.AutoReset, @"Local\HoldToPeek.ShowSettings");
-            var app = new PeekApplication(signal);
+            var app = new PeekApplication(signal, args.Contains("--autostart"));
             return app.Run();
         }
         catch (Exception exception)

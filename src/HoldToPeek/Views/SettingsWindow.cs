@@ -22,6 +22,8 @@ public sealed class SettingsWindow : Window
     private readonly BindingEditor _captureBinding;
     private readonly AppSettings _current;
     private readonly TabControl _pages = new();
+    private readonly CheckBox _startAtLogin;
+    private readonly CheckBox _highPriority;
     private readonly Slider _lineHeightSlider;
     private readonly TextBlock _lineHeightText;
     private readonly TextBlock _triggerHint;
@@ -182,6 +184,17 @@ public sealed class SettingsWindow : Window
             _captureBinding.CancelRecording();
         };
 
+        var runtime = new StackPanel { Margin = new Thickness(26) };
+        runtime.Children.Add(Text("启动与运行", 24, Ink, FontWeights.SemiBold));
+        _startAtLogin = new CheckBox { Content = "登录 Windows 后自动启动", IsChecked = current.StartAtLogin, Margin = new Thickness(0, 24, 0, 10) };
+        runtime.Children.Add(_startAtLogin);
+        runtime.Children.Add(Text("启动后留在托盘，不弹出设置。移动程序目录后，请重新开关此选项；Windows 启动应用设置也可能禁用它。", 13, Muted));
+        _highPriority = new CheckBox { Content = "提高 CPU 调度优先级（High）", IsChecked = current.HighPriority, Margin = new Thickness(0, 24, 0, 10) };
+        runtime.Children.Add(_highPriority);
+        runtime.Children.Add(Text("默认关闭。繁忙时优先获得 CPU 时间，也可能影响其他程序；关闭即可恢复普通优先级。不会启用实时优先级或要求管理员运行。", 13, Muted));
+        _pages.Items.Insert(2, new TabItem { Header = "启动与运行", Padding = new Thickness(16, 10, 16, 10),
+            Content = new ScrollViewer { Content = runtime, VerticalScrollBarVisibility = ScrollBarVisibility.Auto } });
+
         var lineHeading = new Grid();
         lineHeading.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         lineHeading.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -279,7 +292,9 @@ public sealed class SettingsWindow : Window
             PeekBinding = _peekBinding.Binding,
             CaptureBinding = _captureBinding.Binding,
             LineHeight = Math.Round(_lineHeightSlider.Value),
-            HasSeenWelcome = true
+            HasSeenWelcome = true,
+            StartAtLogin = _startAtLogin.IsChecked == true,
+            HighPriority = _highPriority.IsChecked == true
         };
         CaptureRequested = capture;
         Close();

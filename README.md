@@ -1,4 +1,4 @@
-> 源码进度：1.4.0 支持快速框选、自定义按键，以及独立的说明和按键页面；下方下载和动图对应已发布的 1.0.0。详见[更新记录](docs/CHANGELOG.md)。
+> 源码进度：1.5.0 新增快速框选、自定义按键、独立页面、自启与 CPU 优先级；下方下载和动图对应已发布的 1.0.0。详见[更新记录](docs/CHANGELOG.md)。
 
 <p align="center">
   <img src="docs/assets/header-zh.svg" width="100%" alt="瞄一眼 · Hold to Peek：按住看参考，松手接着干。交互概念示意。" />
