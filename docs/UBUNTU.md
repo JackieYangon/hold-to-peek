@@ -2,7 +2,7 @@
 
 ## 中文
 
-Ubuntu 20.04 及以上的 **X11/Xorg 桌面会话**可使用此平台实现。采用 Python 3.8+、GTK 3 与 X11，不需要 .NET。当前是 2.0.0 源码与本地实验包，尚未发布 Linux Release，也尚未完成 Ubuntu 实机验收。
+Ubuntu 20.04 及以上的 **X11/Xorg 桌面会话**可使用此平台实现。采用 Python 3.8+、GTK 3 与 X11，不需要 .NET。2.0.0 实验包与 Windows 包一起提供于 [Release](https://github.com/JackieYangon/hold-to-peek/releases/tag/v2.0.0)，尚未完成 Ubuntu 实机验收。
 
 **Wayland 暂不支持。** 程序会识别并提示，不会冒充完整支持。若登录界面有“Ubuntu on Xorg”，可注销后选择它；没有 Xorg 会话的系统需要另行准备兼容桌面。不要仅通过设置 `GDK_BACKEND=x11` 使用 XWayland，它无法控制原生 Wayland 应用。
 
@@ -48,7 +48,7 @@ Windows 开发机上检查 Python 3.8 语法兼容、核心逻辑、X11 事件�
 
 ## English
 
-This implementation targets **Ubuntu 20.04+ with an X11/Xorg desktop session**, using Python 3.8+, GTK 3, and X11. It does not require .NET. Version 2.0.0 is currently a source update and local experimental package, not a published Linux release or a desktop-validated build.
+This implementation targets **Ubuntu 20.04+ with an X11/Xorg desktop session**, using Python 3.8+, GTK 3, and X11. It does not require .NET. Version 2.0.0 is available as an experimental package alongside Windows in the [Release](https://github.com/JackieYangon/hold-to-peek/releases/tag/v2.0.0). It has not yet been validated on an Ubuntu desktop.
 
 **Wayland is not supported yet.** The app reports this explicitly. Select an Xorg session at login if your system provides one; forcing XWayland cannot control native Wayland applications.
 

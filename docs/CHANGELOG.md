@@ -4,8 +4,8 @@
 
 - 新增 Ubuntu 20.04+ X11/Xorg 实现和 `.deb` 打包脚本：内存框选、按住查看、阅读位置、可录入按键、独立页面、托盘和自启。
 - Add an Ubuntu 20.04+ X11/Xorg implementation and Debian packaging, with in-memory capture, hold-to-peek, reading progress, editable bindings, separate pages, tray controls, and login startup.
-- Wayland 暂不支持，启动时明确提示；Linux 负 nice 优先级受系统权限限制，不提权。当前为源码与本地实验包，真实 Ubuntu 桌面验收待完成，尚未发布 2.0.0 Release。
-- Wayland is not supported yet. Linux priority changes respect OS permissions. This is a source/local experimental build; Ubuntu desktop validation and a 2.0.0 Release remain pending.
+- Wayland 暂不支持，启动时明确提示；Linux 负 nice 优先级受系统权限限制，不提权。Windows ZIP 与 Ubuntu 实验 .deb 同时提供于 2.0.0 Release，真实 Ubuntu 桌面验收待完成。
+- Wayland is not supported yet. Linux priority changes respect OS permissions. The 2.0.0 Release includes a Windows ZIP and an experimental Ubuntu .deb; Ubuntu desktop validation remains pending.
 - Ubuntu 的按住期间暂时接管键盘和鼠标来隔离滚轮，松手恢复。详见 [Ubuntu 使用与兼容说明](UBUNTU.md)。
 
 ## 1.5.0
