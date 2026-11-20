@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using HoldToPeek.Core;
 using HoldToPeek.Services;
 
@@ -21,8 +22,9 @@ public sealed class SettingsWindow : Window
     private readonly Slider _lineHeightSlider;
     private readonly TextBlock _lineHeightText;
     private readonly TextBlock _triggerHint;
+    private readonly ReferencePreview? _referencePreview;
 
-    public SettingsWindow(AppSettings current, string version)
+    public SettingsWindow(AppSettings current, string version, BitmapSource? reference = null, double position = 0, bool paused = false)
     {
         ArgumentNullException.ThrowIfNull(current);
         Title = "瞄一眼 · 设置";
@@ -45,6 +47,13 @@ public sealed class SettingsWindow : Window
             if (e.Key != System.Windows.Input.Key.Escape)
                 return;
 
+            // Escape dismisses an open choice list before dismissing its window.
+            if (_triggerSelector is { IsDropDownOpen: true })
+            {
+                _triggerSelector.IsDropDownOpen = false;
+                e.Handled = true;
+                return;
+            }
             // This window is modeless; IsCancel alone only handles modal dialogs.
             e.Handled = true;
             Close();
@@ -103,6 +112,10 @@ public sealed class SettingsWindow : Window
         lead.LineHeight = 23;
         lead.Margin = new Thickness(0, 10, 0, 21);
         body.Children.Add(lead);
+        var status = Text(reference is null ? "还没有参考 · 先框住要看的内容" : paused
+            ? "已有参考 · 当前已暂停，关闭设置后可在托盘恢复" : "参考已准备好 · 保存后继续使用", 13, Ink);
+        status.Margin = new Thickness(0, 0, 0, 16);
+        body.Children.Add(status);
 
         var steps = new Grid { Margin = new Thickness(0, 0, 0, 23) };
         steps.ColumnDefinitions.Add(new ColumnDefinition());
@@ -113,7 +126,17 @@ public sealed class SettingsWindow : Window
         AddStep(steps, 0, 1, "02", "按住查看", "参考浮在鼠标旁，工作窗口保持原位。");
         AddStep(steps, 1, 0, "03", "滚轮标记", "移动高亮线，记住读到了哪里。");
         AddStep(steps, 1, 1, "04", "松手继续", "收起参考，下次按住接着看。");
-        body.Children.Add(steps);
+        if (!current.HasSeenWelcome)
+        {
+            body.Children.Add(new Expander
+            {
+                Header = "使用方法 · 框住 → 按住 → 滚轮 → 松手",
+                Content = steps,
+                Margin = new Thickness(0, 0, 0, 18),
+                IsExpanded = false,
+                TabIndex = 0
+            });
+        }
 
         var settings = new StackPanel { Margin = new Thickness(18) };
         body.Children.Add(new Border
@@ -135,7 +158,7 @@ public sealed class SettingsWindow : Window
             Background = Brushes.White,
             BorderBrush = Line,
             FontSize = 14,
-            TabIndex = 0
+            TabIndex = 1
         };
         AutomationProperties.SetName(_triggerSelector, "按住触发键");
         _triggerSelector.Items.Add(TriggerChoice(PeekTrigger.MouseBack, "鼠标后退侧键 · X1"));
@@ -175,7 +198,7 @@ public sealed class SettingsWindow : Window
             IsSnapToTickEnabled = true,
             Margin = new Thickness(0, 12, 0, 7),
             Foreground = Ink,
-            TabIndex = 1
+            TabIndex = 2
         };
         AutomationProperties.SetName(_lineHeightSlider, "高亮移动行距，8 到 120 原图像素");
         _lineHeightSlider.ValueChanged += (_, _) => UpdateLineHeightText();
@@ -184,8 +207,30 @@ public sealed class SettingsWindow : Window
         var spacingHelp = Text("按原截图像素计算。文字行距较大时调高；高亮线只标记位置，不会自动识别教程步骤。", 12, Muted);
         spacingHelp.LineHeight = 19;
         settings.Children.Add(spacingHelp);
+        var previewHeading = Text(reference is null ? "用示例试一下行距" : "用当前参考试一下行距", 13, Ink, FontWeights.SemiBold);
+        previewHeading.Margin = new Thickness(0, 14, 0, 0);
+        settings.Children.Add(previewHeading);
+        _referencePreview = new ReferencePreview(reference, position, _lineHeightSlider.Value);
+        settings.Children.Add(_referencePreview);
+        var rehearsal = new DockPanel { LastChildFill = true };
+        var next = ActionButton("下一行 ↓", false);
+        next.Padding = new Thickness(10, 6, 10, 6);
+        next.MinHeight = 34;
+        next.TabIndex = 4;
+        next.Click += (_, _) => _referencePreview.Move(-120);
+        DockPanel.SetDock(next, Dock.Right);
+        rehearsal.Children.Add(next);
+        var previous = ActionButton("上一行 ↑", false);
+        previous.Padding = new Thickness(10, 6, 10, 6);
+        previous.MinHeight = 34;
+        previous.TabIndex = 3;
+        previous.Click += (_, _) => _referencePreview.Move(120);
+        DockPanel.SetDock(previous, Dock.Right);
+        rehearsal.Children.Add(previous);
+        rehearsal.Children.Add(Text("也可在图上滚轮试读。\n不改变原来的阅读位置。", 12, Muted));
+        settings.Children.Add(rehearsal);
 
-        var note = Text("Esc 可取消框选或收起本次预览。截图仅保留在本次运行中，退出后清除；这里只保存触发键和行距设置。", 12, Muted);
+        var note = Text("按住查看时，Shift + 滚轮可精调高亮；Esc 收起预览。关闭此窗口后仍在托盘运行，右键托盘可暂停或退出。截图仅存内存，退出后清除。", 12, Muted);
         note.Margin = new Thickness(2, 18, 2, 0);
         note.LineHeight = 20;
         body.Children.Add(note);
@@ -203,16 +248,18 @@ public sealed class SettingsWindow : Window
         footer.Child = actions;
         Button cancel = ActionButton("取消", false);
         cancel.IsCancel = true;
-        cancel.TabIndex = 4;
+        cancel.TabIndex = 5;
         cancel.Click += (_, _) => Close();
         actions.Children.Add(cancel);
-        Button save = ActionButton("保存设置", false);
-        save.TabIndex = 3;
+        bool preferCapture = reference is null && !current.HasSeenWelcome;
+        Button save = ActionButton("保存设置", !preferCapture);
+        save.TabIndex = 6;
+        save.IsDefault = !preferCapture;
         save.Click += (_, _) => Accept(capture: false);
         actions.Children.Add(save);
-        Button capture = ActionButton("框选参考  →", true);
-        capture.IsDefault = true;
-        capture.TabIndex = 2;
+        Button capture = ActionButton("框选参考  →", preferCapture);
+        capture.IsDefault = !save.IsDefault;
+        capture.TabIndex = 7;
         capture.Click += (_, _) => Accept(capture: true);
         actions.Children.Add(capture);
     }
@@ -240,8 +287,11 @@ public sealed class SettingsWindow : Window
         ? "已有参考时，按住 F8 查看，松开收起。暂停后 F8 恢复原来的功能。"
         : "已有参考时接管这个侧键。暂停后，侧键恢复原来的前进或后退功能。";
 
-    private void UpdateLineHeightText() => _lineHeightText.Text =
-        Math.Round(_lineHeightSlider.Value).ToString(CultureInfo.CurrentCulture) + " 像素 / 格";
+    private void UpdateLineHeightText()
+    {
+        _lineHeightText.Text = Math.Round(_lineHeightSlider.Value).ToString(CultureInfo.CurrentCulture) + " 像素 / 格";
+        _referencePreview?.SetLineHeight(_lineHeightSlider.Value);
+    }
 
     private static ComboBoxItem TriggerChoice(PeekTrigger trigger, string label) =>
         new() { Content = label, Tag = trigger, Padding = new Thickness(4, 5, 4, 5) };

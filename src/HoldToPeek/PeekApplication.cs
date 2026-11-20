@@ -30,6 +30,9 @@ internal sealed class PeekApplication : Application
     private Forms.ContextMenuStrip? _menu;
     private Forms.ToolStripMenuItem? _pauseItem;
     private Forms.ToolStripMenuItem? _statusItem;
+    private Forms.ToolStripMenuItem? _captureItem;
+    private Forms.ToolStripMenuItem? _resetItem;
+    private Forms.ToolStripMenuItem? _clearItem;
     private Icon? _icon;
     private RegisteredWaitHandle? _showRegistration;
     private bool _hasReference;
@@ -91,12 +94,15 @@ internal sealed class PeekApplication : Application
         _statusItem = new Forms.ToolStripMenuItem("还没有参考截图") { Enabled = false };
         _menu.Items.Add(_statusItem);
         _menu.Items.Add(new Forms.ToolStripSeparator());
-        _menu.Items.Add("框选参考…", null, (_, _) => Post(BeginCapture));
+        _captureItem = new Forms.ToolStripMenuItem("框选参考…", null, (_, _) => Post(BeginCapture));
+        _menu.Items.Add(_captureItem);
         _menu.Items.Add("设置与使用说明…", null, (_, _) => Post(ShowSettings));
         _pauseItem = new Forms.ToolStripMenuItem("暂停瞄一眼", null, (_, _) => Post(TogglePaused));
         _menu.Items.Add(_pauseItem);
-        _menu.Items.Add("高亮回到顶部", null, (_, _) => Post(() => { _progress.ResetToTop(); HidePeek(); }));
-        _menu.Items.Add("清除参考截图", null, (_, _) => Post(ClearReference));
+        _resetItem = new Forms.ToolStripMenuItem("高亮回到顶部", null, (_, _) => Post(() => { _progress.ResetToTop(); HidePeek(); }));
+        _clearItem = new Forms.ToolStripMenuItem("清除参考截图", null, (_, _) => Post(ClearReference));
+        _menu.Items.Add(_resetItem);
+        _menu.Items.Add(_clearItem);
         _menu.Items.Add(new Forms.ToolStripSeparator());
         _menu.Items.Add("退出", null, (_, _) => Post(() => Shutdown()));
         _tray = new Forms.NotifyIcon { Icon = _icon, Text = "瞄一眼 · 按住看参考", ContextMenuStrip = _menu, Visible = true };
@@ -116,7 +122,7 @@ internal sealed class PeekApplication : Application
         HidePeek();
         _busy = true;
         RefreshState();
-        var window = new SettingsWindow(_settings, _version);
+        var window = new SettingsWindow(_settings, _version, _peek?.Reference, _progress.Position, _paused);
         _settingsWindow = window;
         window.Closed += (_, _) =>
         {
@@ -131,17 +137,20 @@ internal sealed class PeekApplication : Application
                 catch (Exception error) { Notify("设置暂未保存", $"本次仍会使用新设置。{error.Message}"); }
             }
             RefreshState();
-            if (window.CaptureRequested) Post(BeginCapture);
+            if (window.CaptureRequested) Post(() => BeginCapture(returnToSettings: true));
         };
         window.Show();
         window.Activate();
     }
 
-    private async void BeginCapture()
+    private void BeginCapture() => BeginCapture(returnToSettings: false);
+
+    private async void BeginCapture(bool returnToSettings)
     {
         if (_exiting || _busy) return;
         _busy = true;
         int captureEpoch = ++_captureEpoch;
+        bool captured = false;
         HidePeek();
         RefreshState();
         try
@@ -159,7 +168,8 @@ internal sealed class PeekApplication : Application
                 _progress.LineHeight = _settings.LineHeight;
                 _hasReference = true;
                 _paused = false;
-                Notify("参考已准备好", $"按住{TriggerName()}查看，滚轮移动高亮；松手收起。\n需要微调时，在设置中调整行距。");
+                captured = true;
+                Notify("参考已准备好", $"按住{TriggerName()}查看，滚轮移动高亮；松手收起。\nShift + 滚轮精调位置；右键托盘可调整行距。");
             }
         }
         catch (Exception error)
@@ -171,6 +181,13 @@ internal sealed class PeekApplication : Application
             _captureWindow = null;
             _busy = false;
             RefreshState();
+            // Return to the place that started capture, but never reopen UI after
+            // a lock/display/power interruption or an application shutdown.
+            if (returnToSettings && !captured && !_exiting && captureEpoch == _captureEpoch)
+                Post(() =>
+                {
+                    if (captureEpoch == _captureEpoch) ShowSettings();
+                });
         }
     }
 
@@ -204,6 +221,8 @@ internal sealed class PeekApplication : Application
     {
         HidePeek();
         _hasReference = false;
+        _paused = false;
+        _progress.Reset(0);
         _peek?.ClearReference();
         RefreshState();
     }
@@ -218,8 +237,19 @@ internal sealed class PeekApplication : Application
     private void RefreshState()
     {
         _input.Enabled = !_exiting && !_inputFailed && !_busy && !_paused && _hasReference;
-        if (_pauseItem is not null) _pauseItem.Checked = _paused;
-        if (_statusItem is not null) _statusItem.Text = _inputFailed ? "输入监听不可用，请重启" : _paused ? "已暂停 · 输入保持原样" : _hasReference ? $"按住{TriggerName()}查看参考" : "还没有参考截图";
+        if (_pauseItem is not null)
+        {
+            _pauseItem.Checked = _paused;
+            _pauseItem.Text = _paused ? "恢复瞄一眼" : "暂停瞄一眼";
+            _pauseItem.Enabled = !_busy && !_inputFailed && _hasReference;
+        }
+        if (_captureItem is not null) _captureItem.Enabled = !_busy;
+        if (_resetItem is not null) _resetItem.Enabled = !_busy && _hasReference;
+        if (_clearItem is not null) _clearItem.Enabled = !_busy && _hasReference;
+        string status = _inputFailed ? "输入监听不可用，请重启" : _busy ? "设置或框选中 · 暂不接管按键" : _paused
+            ? "已暂停 · 输入保持原样" : _hasReference ? $"按住{TriggerName()}查看参考" : "还没有参考截图";
+        if (_statusItem is not null) _statusItem.Text = status;
+        if (_tray is not null) _tray.Text = "瞄一眼 · " + status;
     }
 
     private string TriggerName() => _settings.Trigger switch

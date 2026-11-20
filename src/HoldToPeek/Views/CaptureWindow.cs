@@ -20,6 +20,7 @@ public sealed class CaptureWindow : Window
     private readonly Canvas _adornments;
     private readonly TextBlock _selectionSize;
     private readonly Border _instructions;
+    private readonly TextBlock _instructionText;
     private Point? _start;
     private Rect _selection;
 
@@ -65,6 +66,13 @@ public sealed class CaptureWindow : Window
         };
         _adornments.Children.Add(_selectionSize);
         _surface.Children.Add(_adornments);
+        _instructionText = new TextBlock
+        {
+            Text = "拖动框住要看的内容　·　松开完成　·　Esc / 右键取消",
+            Foreground = Brushes.White,
+            FontSize = 16,
+            TextWrapping = TextWrapping.Wrap
+        };
         _instructions = new Border
         {
             Background = new SolidColorBrush(Color.FromRgb(23, 62, 53)),
@@ -74,13 +82,7 @@ public sealed class CaptureWindow : Window
             VerticalAlignment = VerticalAlignment.Top,
             Margin = new Thickness(16, 28, 16, 0),
             IsHitTestVisible = false,
-            Child = new TextBlock
-            {
-                Text = "拖动框住要看的内容　·　松开完成　·　Esc / 右键取消",
-                Foreground = Brushes.White,
-                FontSize = 16,
-                TextWrapping = TextWrapping.Wrap
-            }
+            Child = _instructionText
         };
         _surface.Children.Add(_instructions);
         Content = _surface;
@@ -147,6 +149,7 @@ public sealed class CaptureWindow : Window
         if (pixels.Width < 8 || pixels.Height < 8)
         {
             _selection = Rect.Empty;
+            _instructionText.Text = "选区太小，请拖出更大的范围　·　Esc / 右键取消";
             _instructions.Visibility = Visibility.Visible;
             RefreshSelection();
             return;

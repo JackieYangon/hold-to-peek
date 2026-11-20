@@ -23,6 +23,8 @@ public sealed class PeekWindow : Window
     private double _pixelsToDip = 1;
     private HwndSource? _source;
 
+    public BitmapSource? Reference => _reference;
+
     public PeekWindow()
     {
         Title = "瞄一眼 · 参考";
@@ -92,7 +94,7 @@ public sealed class PeekWindow : Window
         layout.Children.Add(_reader);
         var footer = new TextBlock
         {
-            Text = "滚轮移动高亮 · 松手收起",
+            Text = "滚轮标记 · Shift 精调 · 松手收起",
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             Foreground = new SolidColorBrush(Color.FromRgb(83, 114, 94)),

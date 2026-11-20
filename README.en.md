@@ -54,6 +54,8 @@ The first release is built around this flow:
 
 The highlight marks your reading position. It does not recognize text or identify the next instruction automatically. Capturing a new reference resets the position.
 
+**Spacing feels off? Adjust it with your reference in view.** Settings lets you try the current screenshot and see the highlight change as you move the slider, without losing your reading position. If you start a capture from settings, Esc returns you there and keeps the existing reference.
+
 ## Get Hold to Peek
 
 Development and validation are underway. **There is no verified app or installer to download yet.** A download link will appear here when a usable release is ready.
