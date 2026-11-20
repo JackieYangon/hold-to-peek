@@ -21,6 +21,7 @@ public sealed class SettingsWindow : Window
     private readonly BindingEditor _peekBinding;
     private readonly BindingEditor _captureBinding;
     private readonly AppSettings _current;
+    private readonly TabControl _pages = new();
     private readonly Slider _lineHeightSlider;
     private readonly TextBlock _lineHeightText;
     private readonly TextBlock _triggerHint;
@@ -75,7 +76,8 @@ public sealed class SettingsWindow : Window
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
             CanContentScroll = false
         };
-        layout.Children.Add(scroll);
+        _pages.Items.Add(new TabItem { Header = "参考设置", Content = scroll, Padding = new Thickness(16, 10, 16, 10) });
+        layout.Children.Add(_pages);
 
         var brand = new Grid { Margin = new Thickness(0, 0, 0, 24) };
         brand.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -129,17 +131,18 @@ public sealed class SettingsWindow : Window
         AddStep(steps, 0, 1, "02", "按住查看", "参考浮在鼠标旁，工作窗口保持原位。");
         AddStep(steps, 1, 0, "03", "滚轮标记", "移动高亮线，记住读到了哪里。");
         AddStep(steps, 1, 1, "04", "松手继续", "收起参考，下次按住接着看。");
-        if (!current.HasSeenWelcome)
-        {
-            body.Children.Add(new Expander
-            {
-                Header = "使用方法 · 框住 → 按住 → 滚轮 → 松手",
-                Content = steps,
-                Margin = new Thickness(0, 0, 0, 18),
-                IsExpanded = false,
-                TabIndex = 0
-            });
-        }
+        var guide = new StackPanel { Margin = new Thickness(26) };
+        guide.Children.Add(Text("四个动作，接着干", 24, Ink, FontWeights.SemiBold));
+        steps.Margin = new Thickness(0, 20, 0, 20);
+        guide.Children.Add(steps);
+        guide.Children.Add(Text("快速框选", 16, Ink, FontWeights.SemiBold));
+        guide.Children.Add(Text("默认按 F1 开始框选，也可从托盘或下方按钮开始。拖动选取内容，Esc 或右键取消；取消后保留原参考。可在设置中修改快捷键。", 14, Muted));
+        guide.Children.Add(Text("\n查看与定位", 16, Ink, FontWeights.SemiBold));
+        guide.Children.Add(Text("按住查看键显示参考，松开隐藏。滚轮移动高亮，Shift + 滚轮精调；再次查看保留位置。Esc 可立即收起，松开后再按继续。高亮只标记位置，不识别文字。", 14, Muted));
+        guide.Children.Add(Text("\n暂停、退出与隐私", 16, Ink, FontWeights.SemiBold));
+        guide.Children.Add(Text("关闭设置后仍在托盘运行。右键托盘可暂停、恢复或退出。截图仅存内存，退出后清除；偏好保存在本机。设置编辑期间暂停接管查看键。", 14, Muted));
+        _pages.Items.Add(new TabItem { Header = "使用说明", Padding = new Thickness(16, 10, 16, 10),
+            Content = new ScrollViewer { Content = guide, VerticalScrollBarVisibility = ScrollBarVisibility.Auto } });
 
         var settings = new StackPanel { Margin = new Thickness(18) };
         body.Children.Add(new Border
@@ -215,11 +218,6 @@ public sealed class SettingsWindow : Window
         rehearsal.Children.Add(previous);
         rehearsal.Children.Add(Text("也可在图上滚轮试读。\n不改变原来的阅读位置。", 12, Muted));
         settings.Children.Add(rehearsal);
-
-        var note = Text("按住查看时，Shift + 滚轮可精调高亮；Esc 收起预览。关闭此窗口后仍在托盘运行，右键托盘可暂停或退出。截图仅存内存，退出后清除。", 12, Muted);
-        note.Margin = new Thickness(2, 18, 2, 0);
-        note.LineHeight = 20;
-        body.Children.Add(note);
 
         var footer = new Border
         {

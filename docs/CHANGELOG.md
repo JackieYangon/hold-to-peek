@@ -1,5 +1,10 @@
 # 更新记录 / Changelog
 
+## 1.3.0
+
+- 使用说明移至独立页面，随时可查看框选、阅读、暂停与隐私说明。
+- Move the usage guide to its own always-accessible page.
+
 ## 1.2.0
 
 - 框选与按住查看支持自定义键盘组合；查看支持鼠标中键与侧键，旧偏好自动兼容。
