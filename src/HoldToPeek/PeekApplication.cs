@@ -26,6 +26,7 @@ internal sealed class PeekApplication : Application
     private PeekWindow? _peek;
     private SettingsWindow? _settingsWindow;
     private CaptureWindow? _captureWindow;
+    private CaptureHotkey? _captureHotkey;
     private Forms.NotifyIcon? _tray;
     private Forms.ContextMenuStrip? _menu;
     private Forms.ToolStripMenuItem? _pauseItem;
@@ -68,6 +69,10 @@ internal sealed class PeekApplication : Application
             // Do not queue another CancelHold: it could cancel a newer press.
             _input.Failed += error => Post(() => OnInputFailed(error));
             _input.Start();
+            _captureHotkey = new CaptureHotkey();
+            _captureHotkey.Pressed += () => Post(BeginCapture);
+            try { _captureHotkey.Register(); }
+            catch (Exception error) { Notify("F1 框选快捷键不可用", error.Message); }
             _showRegistration = ThreadPool.RegisterWaitForSingleObject(_showSignal,
                 (_, _) => Post(ShowSettings), null, Timeout.Infinite, false);
             SystemEvents.SessionSwitch += OnSessionSwitch;
@@ -94,7 +99,7 @@ internal sealed class PeekApplication : Application
         _statusItem = new Forms.ToolStripMenuItem("还没有参考截图") { Enabled = false };
         _menu.Items.Add(_statusItem);
         _menu.Items.Add(new Forms.ToolStripSeparator());
-        _captureItem = new Forms.ToolStripMenuItem("框选参考…", null, (_, _) => Post(BeginCapture));
+        _captureItem = new Forms.ToolStripMenuItem("框选参考…  F1", null, (_, _) => Post(BeginCapture));
         _menu.Items.Add(_captureItem);
         _menu.Items.Add("设置与使用说明…", null, (_, _) => Post(ShowSettings));
         _pauseItem = new Forms.ToolStripMenuItem("暂停瞄一眼", null, (_, _) => Post(TogglePaused));
@@ -312,6 +317,7 @@ internal sealed class PeekApplication : Application
         SystemEvents.PowerModeChanged -= OnPowerModeChanged;
         SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
         _showRegistration?.Unregister(null);
+        _captureHotkey?.Dispose();
         _input.Dispose();
         _peek?.ClearReference();
         _peek?.Close();
